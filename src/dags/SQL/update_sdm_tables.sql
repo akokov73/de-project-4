@@ -1,3 +1,9 @@
+-- убираем старые записи в таблице sdm.dm_courier_ledger
+
+delete from dds.dm_api_deliveries dad
+	WHERE
+		date_trunc('month' , dad.delivery_ts) = date_trunc('month' , {{ds}} - interval '1 month'  );
+
 -- Заполняем таблицу sdm.dm_courier_ledger
 
 with t_table as (
@@ -16,6 +22,8 @@ from
 join 
 dds.dm_api_couriers dac on
 	dad.courier_id = dac."_id"
+where 
+	date_trunc('month' , dad.delivery_ts) = date_trunc('month' , {{ds}} - interval '1 month'  )
 group by
 	dad.courier_id ,
 	dac."name" ,
